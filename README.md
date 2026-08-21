@@ -15,16 +15,20 @@ current time — read it like a barometer, not a cartoon icon.
 
 ## Live demo
 
+**Web**: https://dist-psi-eight-58.vercel.app — the full app running in a
+browser (static Expo web export, deployed on Vercel). Location falls back to
+the search flow since browser geolocation permission isn't auto-granted;
+everything else works exactly like the native app.
+
 - **iOS Simulator build (EAS)**: grab the latest `.app` build from the
   [Expo dashboard](https://expo.dev/accounts/brian101/projects/weather-now/builds)
   and install it with `xcrun simctl install booted WeatherNow.app`, or drag
   it onto a running Simulator window.
-- **Run it yourself** (fastest way to see it live): see [Setup](#setup)
-  below — `npx expo start` and scan the QR with Expo Go on your phone.
-
-> If you have an [Appetize.io](https://appetize.io) embed link for this
-> build, drop it here and it'll render as a fully interactive demo on this
-> page.
+- **Run it yourself**: see [Setup](#setup) below — `npx expo start` and scan
+  the QR with Expo Go on your phone.
+- **Redeploy the web build**: `npm run deploy:web` (exports, patches around
+  a Vercel/Metro asset-path quirk — see `scripts/fix-web-export.js` — then
+  deploys).
 
 ## Features
 
