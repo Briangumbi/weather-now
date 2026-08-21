@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Weather Now",
+    "slug": "weather-now",
+    "scheme": "weathernow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#F5F1E8"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.weathernow.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Weather Now uses your location to show hyperlocal forecasts."
+      }
+    },
+    "android": {
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+    },
+    "plugins": ["expo-router"]
+  }
+}
