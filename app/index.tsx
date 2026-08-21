@@ -18,8 +18,10 @@ import { useLocation } from "@/hooks/useLocation";
 import { useWeather } from "@/hooks/useWeather";
 import { useAppStore } from "@/store/useAppStore";
 import { TempDial } from "@/components/TempDial";
+import { HourlyStrip } from "@/components/HourlyStrip";
 import { SunArc } from "@/components/SunArc";
 import { DataLedger } from "@/components/DataLedger";
+import { DailyForecastList } from "@/components/DailyForecastList";
 
 const THEME_ICON: Record<string, ComponentProps<typeof Ionicons>["name"]> = {
   auto: "contrast-outline",
@@ -63,6 +65,14 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       </View>
+
+      {/* TEMP DEBUG: on-screen lat/long so this is visible on standalone
+          builds (Simulator/Appetize) that aren't attached to Metro. */}
+      <Text style={[styles.debugCoords, { color: palette.muted }]}>
+        DEBUG lat/long: {latitude?.toFixed(4) ?? "null"}, {longitude?.toFixed(4) ?? "null"}
+        {" · source: "}
+        {selectedPlace ? "search" : "GPS"}
+      </Text>
 
       <ScrollView
         contentContainerStyle={styles.content}
@@ -112,6 +122,14 @@ export default function HomeScreen() {
               mutedColor={palette.muted}
               placeName={placeName}
             />
+            <HourlyStrip
+              hourly={weather.data.hourly}
+              sunrise={weather.data.today.sunrise}
+              sunset={weather.data.today.sunset}
+              units={units}
+              textColor={palette.text}
+              mutedColor={palette.muted}
+            />
             <SunArc
               sunrise={weather.data.today.sunrise}
               sunset={weather.data.today.sunset}
@@ -126,6 +144,13 @@ export default function HomeScreen() {
               windSpeed={weather.data.current.windSpeed}
               pressure={weather.data.current.pressure}
               precipitation={weather.data.current.precipitation}
+              units={units}
+              textColor={palette.text}
+              hairlineColor={palette.hairline}
+              mutedColor={palette.muted}
+            />
+            <DailyForecastList
+              days={weather.data.dailyForecast}
               units={units}
               textColor={palette.text}
               hairlineColor={palette.hairline}
@@ -154,6 +179,12 @@ const styles = StyleSheet.create({
   unitsToggle: {
     fontFamily: type.mono,
     fontSize: 14,
+  },
+  debugCoords: {
+    fontFamily: type.mono,
+    fontSize: 10,
+    textAlign: "center",
+    paddingBottom: 4,
   },
   content: {
     paddingHorizontal: 20,

@@ -45,6 +45,19 @@ export function SunArc({
 }: SunArcProps) {
   const nowFrac = fracOfDay(now, sunrise, sunset);
   const nowPoint = pointOnArc(nowFrac);
+  console.log("[SunArc debug]", {
+    sunrise,
+    sunset,
+    now,
+    nowAsDateString: new Date(now).toString(),
+    deviceNowMs: Date.now(),
+    deviceNowString: new Date().toString(),
+    sunriseMs: new Date(sunrise).getTime(),
+    sunsetMs: new Date(sunset).getTime(),
+    nowFrac,
+    hourlyTimeFirst3: hourly.slice(0, 3).map((h) => h.time),
+    hourlyTimeLast3: hourly.slice(-3).map((h) => h.time),
+  });
 
   const pathD = useMemo(() => {
     const steps = 40;

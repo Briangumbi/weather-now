@@ -24,6 +24,13 @@ export interface DailySummary {
   tempMin: number;
 }
 
+export interface DailyForecastEntry {
+  date: string; // ISO date
+  weatherCode: number;
+  tempMax: number;
+  tempMin: number;
+}
+
 export interface CurrentConditions {
   temperature: number;
   feelsLike: number;
@@ -43,6 +50,7 @@ export interface WeatherSnapshot {
   current: CurrentConditions;
   hourly: HourlyPoint[]; // next ~24h
   today: DailySummary;
+  dailyForecast: DailyForecastEntry[]; // today + next 6 days
 }
 
 const GEOCODE_URL = "https://geocoding-api.open-meteo.com/v1/search";
@@ -74,9 +82,10 @@ export async function fetchWeather(
     current:
       "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,surface_pressure",
     hourly: "temperature_2m,weather_code",
-    daily: "sunrise,sunset,temperature_2m_max,temperature_2m_min",
+    daily: "sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min",
     timezone: "auto",
-    forecast_days: "2", // today + tomorrow, so "next 24h" never runs off the end
+    past_days: "1", // so daily.time[0] is yesterday, [1] is today
+    forecast_days: "7", // today + next 6 days for the daily forecast list
   });
 
   const res = await fetch(`${FORECAST_URL}?${params.toString()}`);
@@ -113,11 +122,17 @@ export async function fetchWeather(
     },
     hourly,
     today: {
-      date: data.daily.time[0],
-      sunrise: data.daily.sunrise[0],
-      sunset: data.daily.sunset[0],
-      tempMax: data.daily.temperature_2m_max[0],
-      tempMin: data.daily.temperature_2m_min[0],
+      date: data.daily.time[1],
+      sunrise: data.daily.sunrise[1],
+      sunset: data.daily.sunset[1],
+      tempMax: data.daily.temperature_2m_max[1],
+      tempMin: data.daily.temperature_2m_min[1],
     },
+    dailyForecast: data.daily.time.slice(1, 8).map((date: string, i: number) => ({
+      date,
+      weatherCode: data.daily.weather_code[i + 1],
+      tempMax: data.daily.temperature_2m_max[i + 1],
+      tempMin: data.daily.temperature_2m_min[i + 1],
+    })),
   };
 }
