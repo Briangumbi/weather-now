@@ -22,9 +22,18 @@ export default function SearchScreen() {
     router.back();
   }
 
+  function handleUseCurrentLocation() {
+    selectPlace(null);
+    router.back();
+  }
+
   return (
     <View style={[styles.wrap, { paddingTop: insets.top + 8 }]}>
-      <SearchSheet onSelect={handleSelect} recentSearches={recentSearches} />
+      <SearchSheet
+        onSelect={handleSelect}
+        onUseCurrentLocation={handleUseCurrentLocation}
+        recentSearches={recentSearches}
+      />
     </View>
   );
 }

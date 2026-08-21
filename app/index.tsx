@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ComponentProps } from "react";
 import {
   View,
   Text,
@@ -21,16 +21,23 @@ import { TempDial } from "@/components/TempDial";
 import { SunArc } from "@/components/SunArc";
 import { DataLedger } from "@/components/DataLedger";
 
+const THEME_ICON: Record<string, ComponentProps<typeof Ionicons>["name"]> = {
+  auto: "contrast-outline",
+  light: "sunny",
+  dark: "moon",
+};
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { units, toggleUnits, selectedPlace } = useAppStore();
+  const { units, toggleUnits, themeOverride, cycleTheme, selectedPlace } = useAppStore();
 
   const device = useLocation();
   const latitude = selectedPlace?.latitude ?? device.coords?.latitude ?? null;
   const longitude = selectedPlace?.longitude ?? device.coords?.longitude ?? null;
 
   const weather = useWeather(latitude, longitude);
-  const isDay = weather.data?.current.isDay ?? true;
+  const isDay =
+    themeOverride === "auto" ? weather.data?.current.isDay ?? true : themeOverride === "light";
   const palette = paletteFor(isDay);
 
   const placeName = selectedPlace?.name ?? "Current location";
@@ -45,11 +52,16 @@ export default function HomeScreen() {
         <Pressable onPress={() => router.push("/search")} hitSlop={12}>
           <Ionicons name="search" size={20} color={palette.text} />
         </Pressable>
-        <Pressable onPress={toggleUnits} hitSlop={12}>
-          <Text style={[styles.unitsToggle, { color: palette.text }]}>
-            {units === "metric" ? "°C" : "°F"}
-          </Text>
-        </Pressable>
+        <View style={styles.topBarRight}>
+          <Pressable onPress={cycleTheme} hitSlop={12}>
+            <Ionicons name={THEME_ICON[themeOverride]} size={20} color={palette.text} />
+          </Pressable>
+          <Pressable onPress={toggleUnits} hitSlop={12}>
+            <Text style={[styles.unitsToggle, { color: palette.text }]}>
+              {units === "metric" ? "°C" : "°F"}
+            </Text>
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
@@ -103,7 +115,7 @@ export default function HomeScreen() {
             <SunArc
               sunrise={weather.data.today.sunrise}
               sunset={weather.data.today.sunset}
-              now={weather.data.current.observedAt}
+              now={weather.nowMs ?? Date.now()}
               hourly={weather.data.hourly}
               units={units}
               hairlineColor={palette.hairline}
@@ -133,6 +145,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 12,
+  },
+  topBarRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
   },
   unitsToggle: {
     fontFamily: type.mono,

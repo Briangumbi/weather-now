@@ -7,7 +7,7 @@ import type { HourlyPoint } from "@/lib/api";
 interface SunArcProps {
   sunrise: string;
   sunset: string;
-  now: string;
+  now: number; // live epoch ms, in the same parsed frame as sunrise/sunset
   hourly: HourlyPoint[]; // used to plot temp ticks along the arc
   units: "metric" | "imperial";
   hairlineColor: string;
@@ -20,12 +20,11 @@ const ARC_TOP = 24;
 const ARC_BOTTOM = 130;
 const PAD_X = 20;
 
-function fracOfDay(iso: string, sunriseIso: string, sunsetIso: string): number {
-  const t = new Date(iso).getTime();
+function fracOfDay(nowMs: number, sunriseIso: string, sunsetIso: string): number {
   const rise = new Date(sunriseIso).getTime();
   const set = new Date(sunsetIso).getTime();
   if (set === rise) return 0.5;
-  return Math.min(1, Math.max(0, (t - rise) / (set - rise)));
+  return Math.min(1, Math.max(0, (nowMs - rise) / (set - rise)));
 }
 
 // Point on a shallow arc for a given fraction [0,1] across the day.
@@ -83,7 +82,7 @@ export function SunArc({
           strokeLinecap="round"
         />
         {ticks.map((h) => {
-          const f = fracOfDay(h.time, sunrise, sunset);
+          const f = fracOfDay(new Date(h.time).getTime(), sunrise, sunset);
           const p = pointOnArc(f);
           return (
             <React.Fragment key={h.time}>

@@ -8,15 +8,17 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { colors, type } from "@/theme/tokens";
 import { searchPlaces, GeocodeResult } from "@/lib/api";
 
 interface SearchSheetProps {
   onSelect: (place: GeocodeResult) => void;
+  onUseCurrentLocation: () => void;
   recentSearches: GeocodeResult[];
 }
 
-export function SearchSheet({ onSelect, recentSearches }: SearchSheetProps) {
+export function SearchSheet({ onSelect, onUseCurrentLocation, recentSearches }: SearchSheetProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<GeocodeResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -52,6 +54,10 @@ export function SearchSheet({ onSelect, recentSearches }: SearchSheetProps) {
         autoFocus
         autoCorrect={false}
       />
+      <Pressable style={styles.currentLocationRow} onPress={onUseCurrentLocation}>
+        <Ionicons name="locate" size={16} color={colors.accent} />
+        <Text style={styles.currentLocationText}>Use current location</Text>
+      </Pressable>
       {loading && <ActivityIndicator style={{ marginTop: 12 }} color={colors.accent} />}
       {!loading && query.trim() && !results.length && (
         <Text style={styles.empty}>No places found. Try a different spelling.</Text>
@@ -84,6 +90,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.hairline,
     paddingBottom: 10,
+  },
+  currentLocationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 14,
+    marginTop: 4,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.hairline,
+  },
+  currentLocationText: {
+    fontFamily: type.bodyMedium,
+    fontSize: 15,
+    color: colors.accent,
   },
   empty: {
     fontFamily: type.body,
