@@ -31,16 +31,6 @@ export function useWeather(
     try {
       const snapshot = await fetchWeather(latitude, longitude);
       fetchedAtMsRef.current = Date.now();
-      console.log("[useWeather debug]", {
-        deviceNowMs: fetchedAtMsRef.current,
-        deviceNowString: new Date(fetchedAtMsRef.current).toString(),
-        observedAt: snapshot.current.observedAt,
-        sunrise: snapshot.today.sunrise,
-        sunset: snapshot.today.sunset,
-        hourlyTimeFirst3: snapshot.hourly.slice(0, 3).map((h) => h.time),
-        hourlyTimeLast3: snapshot.hourly.slice(-3).map((h) => h.time),
-        hourlyLength: snapshot.hourly.length,
-      });
       setData(snapshot);
     } catch (e) {
       setError("Couldn't load the forecast. Pull down to try again.");

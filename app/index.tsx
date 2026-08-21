@@ -66,14 +66,6 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* TEMP DEBUG: on-screen lat/long so this is visible on standalone
-          builds (Simulator/Appetize) that aren't attached to Metro. */}
-      <Text style={[styles.debugCoords, { color: palette.muted }]}>
-        DEBUG lat/long: {latitude?.toFixed(4) ?? "null"}, {longitude?.toFixed(4) ?? "null"}
-        {" · source: "}
-        {selectedPlace ? "search" : "GPS"}
-      </Text>
-
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
@@ -179,12 +171,6 @@ const styles = StyleSheet.create({
   unitsToggle: {
     fontFamily: type.mono,
     fontSize: 14,
-  },
-  debugCoords: {
-    fontFamily: type.mono,
-    fontSize: 10,
-    textAlign: "center",
-    paddingBottom: 4,
   },
   content: {
     paddingHorizontal: 20,
